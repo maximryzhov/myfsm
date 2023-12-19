@@ -3,6 +3,7 @@ import random
 from nodes  import *
 from state_machine import State, Machine
 from runners import SimulationRunner
+from utils import DotPath
 
 if __name__ ==  "__main__":
     # Из состояния START переходим в STAGE1 без всяких условий
@@ -10,8 +11,8 @@ if __name__ ==  "__main__":
     # Из состояния STAGE1 переходим в  STAGE2, только когда переменная a>2
     stage_1 = State("stage_1", next_logic=IfElse(IsMore(Var("a"), 2), Value("stage_2"),  Value("stage_1")))
     # При входе в состояние STAGE2 устанавливаем переменной a случайное значение от 0 до 1
-    # Из состояния STAGE2 переходим в SUCCESS, если переменная b>0.5
-    stage_2 = State("stage_2",  IfElse(IsMore(Var("b"), 0.5), Value("success"),  Value("fail")), enter_logic=Set(Var("b"), Func("get_rand_val")))
+    # Из состояния STAGE2 переходим в SUCCESS, если переменная some_data.b.0 > 0.5
+    stage_2 = State("stage_2",  IfElse(IsMore(Var("some_data.b.0"), 0.5), Value("success"),  Value("fail")), enter_logic=Set(Var("some_data.b.0"), Func("get_rand_val")))
     fail = State("fail")
     success = State("success")
 
@@ -23,10 +24,10 @@ if __name__ ==  "__main__":
     m.add_state(success)
     m.set_current("start")
 
-    # TODO: 1. отделить логику от данных 2. доступ к вложенным структурам
+    # TODO: отделить логику от данных
     context = {
         "a": 0,
-        "b": 0,
+        "some_data": {"b": [0, 0, 0]},
         "get_rand_val": lambda: random.random()
     }
 
@@ -45,4 +46,4 @@ if __name__ ==  "__main__":
     ]
 
     runner = SimulationRunner(m, context, event_queue)
-    runner.run()
+    runner.run()  
