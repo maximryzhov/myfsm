@@ -9,10 +9,10 @@ if __name__ ==  "__main__":
     # Из состояния START переходим в STAGE1 без всяких условий
     start = State("start", next_logic=Value("stage_1"))
     # Из состояния STAGE1 переходим в  STAGE2, только когда переменная a>2
-    stage_1 = State("stage_1", next_logic=IfElse(IsMore(Var("a"), 2), Value("stage_2"),  Value("stage_1")))
+    stage_1 = State("stage_1", next_logic=IfElse(IsMore(Var("a"), Value(2)), Value("stage_2"),  Value("stage_1")))
     # При входе в состояние STAGE2 устанавливаем переменной a случайное значение от 0 до 1
     # Из состояния STAGE2 переходим в SUCCESS, если переменная some_data.b.0 > 0.5
-    stage_2 = State("stage_2",  IfElse(IsMore(Var("some_data.b.0"), 0.5), Value("success"),  Value("fail")), enter_logic=Set(Var("some_data.b.0"), Func("get_rand_val")))
+    stage_2 = State("stage_2",  IfElse(IsMore(Var("some_data.b.0"), Value(0.5)), Value("success"),  Value("fail")), enter_logic=Set(Var("some_data.b.0"), Func("get_rand_val")))
     fail = State("fail")
     success = State("success")
 
