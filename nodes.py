@@ -1,6 +1,8 @@
 from abc import ABCMeta, abstractmethod
 from typing import Any, TypeVar
 
+from utils import DotPath
+
 # TODO: 1. логические операторы 2. циклы
 
 N = TypeVar('N', bound='Node')
@@ -31,7 +33,7 @@ class Var(Node):
         self.name  = name
     
     def __call__(self, context=None, *args, **kwargs):
-        return context.get(self.name)
+        return DotPath.get_value(context, self.name)
 
 class Op(Node, metaclass=ABCMeta):
     """
