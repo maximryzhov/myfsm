@@ -2,8 +2,7 @@ import random
 
 from nodes  import *
 from state_machine import State, Machine
-from runners import SimulationRunner
-from utils import DotPath
+from runners import Task, TaskRunner
 
 if __name__ ==  "__main__":
     # Из состояния START переходим в STAGE1 без всяких условий
@@ -30,20 +29,19 @@ if __name__ ==  "__main__":
         "some_data": {"b": [0, 0, 0]},
         "get_rand_val": lambda: random.random()
     }
+    
+    main_task = Task("MAIN", m, context)
 
     event_queue = [
-        {"name":  "idle"},
-        {"name":  "idle"},
-        {"name":  "next"},
-        {"name":  "set_var", "payload": {"name": "a", "value": 1}},
-        {"name":  "next"},
-        {"name":  "set_var", "payload": {"name": "a", "value": 2}},
-        {"name":  "next"},
-        {"name":  "set_var", "payload": {"name": "a", "value": 3}},
-        {"name":  "next"},
-        {"name":  "next"},
-        {"name":  "next"},
+        {"name":  "idle", "task": "MAIN"},
+        {"name":  "advance", "task": "MAIN"},
+        {"name":  "change_state", "task": "MAIN",  "payload": {"path": "a", "value": 3}},
+        {"name":  "advance", "task": "MAIN"},
+        {"name":  "advance", "task": "MAIN"},
+        {"name":  "advance", "task": "MAIN"},
+        {"name":  "advance", "task": "MAIN"},
     ]
 
-    runner = SimulationRunner(m, context, event_queue)
+    runner = TaskRunner(event_queue)
+    runner.add_task(main_task)
     runner.run()  

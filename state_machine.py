@@ -6,7 +6,6 @@ from nodes import N
 class Machine():
     def __init__(self):
         self.states = {}
-        # TODO: обработка нескольких веток за один шаг с помощью курсоров/токенов?
         self.current_state_name = None
     
     def add_state(self, state):
@@ -16,12 +15,11 @@ class Machine():
         self.current_state_name = state_name
         # TODO: валидация
        
-    def step(self, context):
+    def advance(self, context):
         current_state = self.states.get(self.current_state_name)
         next_state_name = current_state.get_next(context)
         next_state = self.states.get(next_state_name)
         if next_state is None:
-            print("НЕТ СЛЕДУЮЩЕГО СОСТОЯНИЯ")
             return False
         current_state.on_exit(context)
         next_state.on_enter(context)
