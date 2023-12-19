@@ -1,8 +1,22 @@
 import random
+from typing_extensions import Callable
 
 from nodes  import *
 from state_machine import State, Machine
 from runners import Task, TaskRunner
+
+class Context:
+    def __init__(self, name, data:dict=None) -> None:
+        self.name = name
+        self.data = data or {}
+        self.callbacks = {}
+    
+    def register_callback(self, name: str, callback: Callable):
+        self.callbacks[name]  = callback
+
+
+def get_rand_val(context):
+    return random.random()
 
 if __name__ ==  "__main__":
     # Из состояния START переходим в STAGE1 без всяких условий
@@ -23,12 +37,12 @@ if __name__ ==  "__main__":
     m.add_state(success)
     m.set_current("start")
 
-    # TODO: отделить логику от данных
-    context = {
+    data = {
         "a": 0,
-        "some_data": {"b": [0, 0, 0]},
-        "get_rand_val": lambda: random.random()
+        "some_data": {"b": [0, 0, 0]}
     }
+    context = Context("Default", data)
+    context.register_callback("get_rand_val", get_rand_val)
     
     main_task = Task("MAIN", m, context)
 

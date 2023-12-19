@@ -33,7 +33,7 @@ class Var(Node):
         self.name  = name
     
     def __call__(self, context=None, *args, **kwargs):
-        return DotPath.get_value(context, self.name)
+        return DotPath.get_value(context.data, self.name)
 
 class Op(Node, metaclass=ABCMeta):
     """
@@ -45,23 +45,23 @@ class Op(Node, metaclass=ABCMeta):
 
 class Set(Op):  
     def __call__(self, context=None, *args, **kwargs):
-        DotPath.set_value(context, self.var1.name, self.var2(context))
+        DotPath.set_value(context.data, self.var1.name, self.var2(context))
     
 class Add(Op):
     def __call__(self, context=None, *args, **kwargs):
-       DotPath.set_value(context, self.var1() + self.var2(context))
+       DotPath.set_value(context.data, self.var1() + self.var2(context))
 
 class Sub(Op):
     def __call__(self, context=None, *args, **kwargs):
-        DotPath.set_value(context, self.var1() - self.var2(context))
+        DotPath.set_value(context.data, self.var1() - self.var2(context))
 
 class Mul(Op):
     def __call__(self, context=None, *args, **kwargs):
-        DotPath.set_value(context, self.var1() * self.var2(context))
+        DotPath.set_value(context.data, self.var1() * self.var2(context))
 
 class Div(Op):
     def __call__(self, context=None, *args, **kwargs):
-        DotPath.set_value(context, self.var1() / self.var2(context))
+        DotPath.set_value(context.data, self.var1() / self.var2(context))
 
 class Cmp(Node):
     """
@@ -94,9 +94,9 @@ class Func(Node):
         self.name = name
 
     def __call__(self, context=None, *args, **kwargs):
-        func = context.get(self.name)
+        func = context.callbacks.get(self.name)
         if func and callable(func):
-            return func(*[v(context) for v in self.vars])
+            return func(context, *[v(context) for v in self.vars])
 
 
 class NoOp(Func):

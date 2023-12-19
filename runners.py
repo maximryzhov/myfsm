@@ -36,7 +36,7 @@ class TaskRunner:
                     del self.tasks[task_name]
 
             elif event["name"] == "change_state":
-                DotPath.set_value(task.context, event["payload"]["path"], event["payload"]["value"]) 
+                DotPath.set_value(task.context.data, event["payload"]["path"], event["payload"]["value"]) 
             
             else:
                 print("НЕИЗВЕСТНОЕ СОБЫТИЕ")
