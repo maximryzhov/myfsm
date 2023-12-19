@@ -39,54 +39,51 @@ class Op(Node, metaclass=ABCMeta):
     """
     Выполняет операцию над переменной
     """
-    def __init__(self, var: Var, val:Any) -> None:
-        self.var = var
-        self.val = val
+    def __init__(self, var1: Var, var2:Any) -> None:
+        self.var1 = var1
+        self.var2 = var2
 
 class Set(Op):  
     def __call__(self, context=None, *args, **kwargs):
-        context[self.var.name] = self.val(context) if isinstance(self.val, Node) else self.val
+        DotPath.set_value(context, self.var1.name, self.var2(context))
     
 class Add(Op):
     def __call__(self, context=None, *args, **kwargs):
-       context[self.var.name] += self.val(context) if isinstance(self.val, Node) else self.val
+       DotPath.set_value(context, self.var1() + self.var2(context))
 
 class Sub(Op):
     def __call__(self, context=None, *args, **kwargs):
-        context[self.var.name] -= self.val(context) if isinstance(self.val, Node) else self.val
+        DotPath.set_value(context, self.var1() - self.var2(context))
 
 class Mul(Op):
     def __call__(self, context=None, *args, **kwargs):
-        context[self.var.name] *= self.val(context) if isinstance(self.val, Node) else self.val
+        DotPath.set_value(context, self.var1() * self.var2(context))
 
 class Div(Op):
     def __call__(self, context=None, *args, **kwargs):
-        context[self.var.name] /= self.val(context) if isinstance(self.val, Node) else self.val
+        DotPath.set_value(context, self.var1() / self.var2(context))
 
 class Cmp(Node):
     """
     Сравнивает переменную со значением или другой переменной
     """
-    def __init__(self, var: Var, val: Any) -> None:
-        self.var = var
-        self.val = val
+    def __init__(self, var1: Var, var2: N) -> None:
+        self.var1 = var1
+        self.var2 = var2
 
 
 class IsEqual(Cmp):
     def __call__(self, context=None, *args, **kwargs):
-        val = self.val(context) if isinstance(self.val, Node) else self.val
-        return self.var(context) == val
+        return self.var1(context) == self.var2(context)
 
 
 class IsMore(Cmp):
     def __call__(self, context=None, *args, **kwargs):
-        val = self.val(context) if isinstance(self.val, Node) else self.val
-        return self.var(context) > val
+        return self.var1(context) > self.var2(context)
 
 class IsLess(Cmp):
     def __call__(self, context=None, *args, **kwargs):
-        val = self.val(context) if isinstance(self.val, Node) else self.val
-        return self.var(context) < val
+        return self.var1(context) < self.var2(context)
 
 class Func(Node):
     """
