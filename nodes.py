@@ -72,18 +72,19 @@ class Cmp(Node):
 
 class IsEqual(Cmp):
     def __call__(self, context=None, *args, **kwargs):
-        return self.var(context) == self.val(context) if isinstance(self.val, Node) else self.val
+        val = self.val(context) if isinstance(self.val, Node) else self.val
+        return self.var(context) == val
 
 
 class IsMore(Cmp):
     def __call__(self, context=None, *args, **kwargs):
-        return self.var(context) > self.val(context) if isinstance(self.val, Node) else self.val
-
+        val = self.val(context) if isinstance(self.val, Node) else self.val
+        return self.var(context) > val
 
 class IsLess(Cmp):
     def __call__(self, context=None, *args, **kwargs):
-        return self.var(context) < self.val(context) if isinstance(self.val, Node) else self.val
-
+        val = self.val(context) if isinstance(self.val, Node) else self.val
+        return self.var(context) < val
 
 class Func(Node):
     """
